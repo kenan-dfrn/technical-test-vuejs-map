@@ -7,6 +7,7 @@ Develop a FloorMap component to
 * Display markers on the floor plan at specified locations.
 * Allow users to zoom **smoothly** and pan across the floor plan.
 * Add a button below the map to zoom on marker 3 (Dwigth's desk).
+* *Bonus: use a custom Vue component as Leaflet markers icon to customize it*
 
 ## Technical Constraints
 * Leaflet must be used for handling the map functionality. Use directly the Leaflet library not a Vue binding such as vue-leaflet.
@@ -14,6 +15,9 @@ Develop a FloorMap component to
 * No external UI libraries (e.g., Vuetify, BootstrapVue) are allowed for implementing the map itself.
 * Nuxt 3 must be used for the project structure.
 * TypeScript must be used for type checking.
+
+> Why not use a Vue library for Leaflet? In our experience, using Vue libraries for advanced Leaflet usage can be limiting and usually has led to performance and unfixable issues, that's why we try to use directly the Leaflet library as much as possible.
+
 
 ## Instructions for handing in the test
 
