@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   },
 
   css: [
-    '@/assets/scss/main.scss'
+    '@/assets/scss/main.scss',
+    'leaflet/dist/leaflet.css',
   ],
 
   postcss: {
