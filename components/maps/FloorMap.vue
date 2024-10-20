@@ -1,7 +1,12 @@
 <template>
   <div class="map-container">
-    <div ref="mapContainer" class="leaflet-map" />
-    <button @click="zoomToMarker('Dwight')" class="zoom-button">Zoom to Dwight's Desk</button>
+    <template v-if="imageError">
+      <p class="text-red-500">There was an error loading the floor plan image.</p>
+    </template>
+    <template v-else>
+      <div ref="mapContainer" class="leaflet-map" />
+      <button @click="zoomToMarker('Dwight')" class="zoom-button">Zoom to Dwight's Desk</button>
+    </template>
   </div>
 </template>
 
@@ -24,14 +29,14 @@
   const markersLayer = ref<L.LayerGroup | null>(null);
 
   const imageSize = ref({ width: 0, height: 0 });
+  const imageError = ref(false);
 
   onMounted(async () => {
     try {
       imageSize.value = await getImageSize(props.floorPlanUrl);
-      await initializeMap();
-      addMarkers(props.markers, MarkerIcon);
+      await initializeMap().then(() => addMarkers(props.markers, MarkerIcon));
     } catch (error) {
-      console.error('Error initializing map:', error);
+      imageError.value = true;
     }
   });
 
