@@ -13,7 +13,7 @@
 <script setup lang="ts">
   import L from 'leaflet'
   import MarkerIcon from '@/components/maps/MarkerIcon.vue'
-  import { createApp } from 'vue'
+  import { createVNode, render } from 'vue';
   import { getImageSize } from '@/utils/images'
   import type { MarkerType } from '@/types/maps/FloorMap'
 
@@ -64,11 +64,9 @@
       markers.forEach((marker: MarkerType) => {
         const markerDiv = document.createElement('div');
         const markerImage = generatedMarkerImage(marker); // TODO : remove this when using real images
-
-        createApp(markerComponent, {
-          marker: marker,
-          image: markerImage, // TODO : remove this when using real images
-        }).mount(markerDiv);
+        
+        const markerVNode = createVNode(MarkerIcon, { marker, image: markerImage });
+        render(markerVNode, markerDiv);
 
         const leafletMarker = L.marker([marker.y, marker.x], {
           icon: L.divIcon({
