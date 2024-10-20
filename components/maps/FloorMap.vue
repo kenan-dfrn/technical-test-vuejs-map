@@ -8,6 +8,7 @@
 <script setup lang="ts">
   import L from 'leaflet'
   import type { MarkerType } from '@/types/maps/FloorMap'
+  import { createApp } from 'vue'
 
   const props = defineProps({
     markers: { type: Array as PropType<MarkerType[]>, required: false, default: () => [] },
@@ -16,8 +17,10 @@
   
   const mapContainer = ref<HTMLDivElement | null>(null);
   const map = ref<L.Map | null>(null);
+  const markersLayer = ref<L.LayerGroup | null>(null);
 
   onMounted(async () => {
+    // initialization
     const bounds = [[0, 0], [1079, 2159]];
 
     if (mapContainer.value) {
@@ -32,8 +35,26 @@
       L.imageOverlay(props.floorPlanUrl, bounds).addTo(map.value);
       map.value.fitBounds(bounds);
     }
-  });
 
+    // add markers
+    if (map.value) {
+      markersLayer.value = L.layerGroup();
+      props.markers.forEach((marker: MarkerType) => {
+        const markerDiv = document.createElement('div');
+
+        const leafletMarker = L.marker([marker.y, marker.x], {
+          icon: L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background-color:red; padding: 10px; border-radius: 50%; color: white; font-weight: bold;">${marker.label}</div>`
+          }),
+        });
+
+        leafletMarker.addTo(markersLayer.value as L.LayerGroup);
+      });
+
+      markersLayer.value.addTo(map.value);
+    }
+  });
 
 </script>
 
