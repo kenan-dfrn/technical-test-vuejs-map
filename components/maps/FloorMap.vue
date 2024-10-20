@@ -8,8 +8,11 @@
 <script setup lang="ts">
   import L from 'leaflet'
   import MarkerIcon from '@/components/maps/MarkerIcon.vue'
-  import type { MarkerType } from '@/types/maps/FloorMap'
   import { createApp } from 'vue'
+  import { getImageSize } from '@/utils/images'
+  import type { MarkerType } from '@/types/maps/FloorMap'
+
+
 
   const props = defineProps({
     markers: { type: Array as PropType<MarkerType[]>, required: false, default: () => [] },
@@ -20,8 +23,11 @@
   const map = ref<L.Map | null>(null);
   const markersLayer = ref<L.LayerGroup | null>(null);
 
+  const imageSize = ref({ width: 0, height: 0 });
+
   onMounted(async () => {
     try {
+      imageSize.value = await getImageSize(props.floorPlanUrl);
       await initializeMap();
       addMarkers(props.markers, MarkerIcon);
     } catch (error) {
@@ -31,7 +37,7 @@
 
   
   const initializeMap = async () => {
-    const bounds = [[0, 0], [1079, 2159]];
+    const bounds = [[0, 0], [imageSize.value.height, imageSize.value.width]];
 
     if (mapContainer.value) {
       map.value = L.map(mapContainer.value, {
@@ -39,7 +45,7 @@
         minZoom: -1,
         maxZoom: 1,
         zoom: -1,
-        center: [1079 / 2, 2159 / 2],
+        center: [imageSize.value.height / 2, imageSize.value.width / 2],
       });
 
       L.imageOverlay(props.floorPlanUrl, bounds).addTo(map.value);
