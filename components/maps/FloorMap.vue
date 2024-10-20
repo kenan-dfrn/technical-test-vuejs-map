@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
   import L from 'leaflet'
+  import MarkerIcon from '@/components/maps/MarkerIcon.vue'
   import type { MarkerType } from '@/types/maps/FloorMap'
   import { createApp } from 'vue'
 
@@ -41,11 +42,17 @@
       markersLayer.value = L.layerGroup();
       props.markers.forEach((marker: MarkerType) => {
         const markerDiv = document.createElement('div');
+        const markerImage = generatedMarkerImage(marker); // TODO : remove this when using real images
+
+        createApp(MarkerIcon, {
+          marker: marker,
+          image: markerImage, // TODO : remove this when using real images
+        }).mount(markerDiv);
 
         const leafletMarker = L.marker([marker.y, marker.x], {
           icon: L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background-color:red; padding: 10px; border-radius: 50%; color: white; font-weight: bold;">${marker.label}</div>`
+            html: markerDiv.innerHTML
           }),
         });
 
@@ -56,6 +63,11 @@
     }
   });
 
+  // TODO : remove this when using real images
+  const generatedMarkerImage = (marker: MarkerType) => {
+    const randomId = Math.random().toString(36).substring(2, 15);
+    return `https://picsum.photos/200?random=${randomId}`
+  }
 </script>
 
 <style lang="scss" scoped>
