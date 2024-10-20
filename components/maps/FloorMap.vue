@@ -64,7 +64,7 @@
         const markerDiv = document.createElement('div');
         const markerImage = generatedMarkerImage(marker); // TODO : remove this when using real images
         
-        const markerVNode = createVNode(MarkerIcon, { marker, image: markerImage });
+        const markerVNode = createVNode(markerComponent, { marker, image: markerImage });
         render(markerVNode, markerDiv);
 
         const leafletMarker = L.marker([marker.y, marker.x], {
