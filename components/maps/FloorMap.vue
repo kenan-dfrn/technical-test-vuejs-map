@@ -28,8 +28,8 @@
   const map = ref<L.Map | null>(null);
   const markersLayer = ref<L.LayerGroup | null>(null);
 
-  const imageSize = ref({ width: 0, height: 0 });
-  const imageError = ref(false);
+  const imageSize = ref<{ width: number; height: number }>({ width: 0, height: 0 });
+  const imageError = ref<boolean>(false);
 
   onMounted(async () => {
     try {
@@ -50,7 +50,6 @@
         minZoom: -1,
         maxZoom: 1,
         zoom: -1,
-        center: [imageSize.value.height / 2, imageSize.value.width / 2],
       });
 
       L.imageOverlay(props.floorPlanUrl, bounds).addTo(map.value);

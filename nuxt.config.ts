@@ -10,6 +10,10 @@ export default defineNuxtConfig({
     dirs: [{ path: '~/components', pathPrefix: false }]
   },
 
+  modules: [
+    "@pinia/nuxt"
+  ],
+
   css: [
     '@/assets/scss/main.scss',
     'leaflet/dist/leaflet.css',

@@ -15,15 +15,13 @@
 </template>
   
 <script setup lang="ts">
+import { useFloorMapStore } from '@/store/floorMap'
 import type { MarkerType } from '@/types/maps/FloorMap'
 
-const floorPlanUrl = '/office_floor.jpg'; // Path to the floor plan image
-const markers: MarkerType[] = [
-    { id: 1, x: 350, y: 1010, label: 'Michael' },
-    { id: 2, x: 430, y: 620, label: 'Jim' },
-    { id: 3, x: 530, y: 450, label: 'Dwight' },
-    { id: 4, x: 130, y: 520, label: 'Pam' },
-];
+const floorMapStore = useFloorMapStore()
+
+const markers: MarkerType[] = floorMapStore.markers
+const floorPlanUrl: string = floorMapStore.floorPlanUrl
 </script>
 
 <style lang="scss" scoped>
