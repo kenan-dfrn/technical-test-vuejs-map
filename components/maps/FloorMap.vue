@@ -1,7 +1,7 @@
 <template>
   <div class="map-container">
     <div ref="mapContainer" class="leaflet-map" />
-    <button class="zoom-button">Zoom to Dwight's Desk</button>
+    <button @click="zoomToMarker('Dwight')" class="zoom-button">Zoom to Dwight's Desk</button>
   </div>
 </template>
 
@@ -21,7 +21,16 @@
   const markersLayer = ref<L.LayerGroup | null>(null);
 
   onMounted(async () => {
-    // initialization
+    try {
+      await initializeMap();
+      addMarkers(props.markers, MarkerIcon);
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  });
+
+  
+  const initializeMap = async () => {
     const bounds = [[0, 0], [1079, 2159]];
 
     if (mapContainer.value) {
@@ -30,21 +39,22 @@
         minZoom: -1,
         maxZoom: 1,
         zoom: -1,
-        center: [0, 0],
+        center: [1079 / 2, 2159 / 2],
       });
 
       L.imageOverlay(props.floorPlanUrl, bounds).addTo(map.value);
       map.value.fitBounds(bounds);
     }
+  }
 
-    // add markers
+  const addMarkers = (markers: MarkerType[], markerComponent: Component) => {
     if (map.value) {
       markersLayer.value = L.layerGroup();
-      props.markers.forEach((marker: MarkerType) => {
+      markers.forEach((marker: MarkerType) => {
         const markerDiv = document.createElement('div');
         const markerImage = generatedMarkerImage(marker); // TODO : remove this when using real images
 
-        createApp(MarkerIcon, {
+        createApp(markerComponent, {
           marker: marker,
           image: markerImage, // TODO : remove this when using real images
         }).mount(markerDiv);
@@ -52,21 +62,27 @@
         const leafletMarker = L.marker([marker.y, marker.x], {
           icon: L.divIcon({
             className: 'custom-marker',
-            html: markerDiv.innerHTML
+            html: markerDiv.innerHTML,
           }),
         });
 
-        leafletMarker.addTo(markersLayer.value as L.LayerGroup);
+        leafletMarker.addTo(markersLayer.value as L.LayerGroup).on('click', () => zoomToMarker(marker.id));
       });
 
       markersLayer.value.addTo(map.value);
     }
-  });
+  };
 
   // TODO : remove this when using real images
   const generatedMarkerImage = (marker: MarkerType) => {
-    const randomId = Math.random().toString(36).substring(2, 15);
-    return `https://picsum.photos/200?random=${randomId}`
+    return `https://picsum.photos/200?random=${marker.id}`;
+  }
+
+  const zoomToMarker = (id: number | string) => {
+    const askedMarker = props.markers.find((marker: MarkerType) => marker.id === id || marker.label === id);
+    if (askedMarker && map.value) {
+      map.value.setView([askedMarker.y, askedMarker.x], 0);
+    }
   }
 </script>
 
